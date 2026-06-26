@@ -1,0 +1,16 @@
+budgets:
+  dailyUserLimit: 50000
+  commandLimits:
+    impact-analysis: 8000
+    mr-review: 16000
+    test-scenarios: 10000
+    support-investigation: 12000
+    pipeline-failure: 6000
+    definition-of-done: 6000
+
+largeContext:
+  requireApprovalAbove: 12000
+  summarizeBeforeSend: true
+  maxGitDiffFiles: 20
+  maxLogLines: 300
+  maxRowsSentToAi: 20

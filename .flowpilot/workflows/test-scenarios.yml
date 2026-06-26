@@ -1,0 +1,22 @@
+id: test-scenarios
+name: Test Scenario Generation
+roles:
+  - tester
+  - ba
+  - developer
+inputs:
+  - gitlab.issue
+  - gitlab.mergeRequest
+  - git.diff
+  - knowledge.testStrategy
+  - knowledge.domainRules
+ai:
+  enabled: true
+  maxInputTokens: 10000
+  promptTemplate: prompts/test-scenarios.md
+outputs:
+  - functionalTests
+  - regressionTests
+  - negativeTests
+  - dataSetup
+  - automationIdeas

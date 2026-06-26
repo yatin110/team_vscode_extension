@@ -1,0 +1,362 @@
+{
+  "name": "ubs-flowpilot",
+  "displayName": "UBS FlowPilot",
+  "description": "Enterprise VS Code assistant platform for delivery workflows, GitLab integration, knowledge retrieval, and governed L3 support.",
+  "version": "0.1.4",
+  "publisher": "ubs-internal",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.company.internal/platform-delivery/ubs-flowpilot.git"
+  },
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning",
+    "SCM Providers"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:flowpilot.actions",
+    "onView:flowpilot.workspace",
+    "onCommand:flowpilot.analyseRequirement",
+    "onCommand:flowpilot.reviewMergeRequest",
+    "onCommand:flowpilot.generateTestScenarios",
+    "onCommand:flowpilot.investigateSupportIssue",
+    "onCommand:flowpilot.checkDefinitionOfDone",
+    "onCommand:flowpilot.createDesignDocument",
+    "onCommand:flowpilot.generateDesignDocument",
+    "onCommand:flowpilot.selectApplication",
+    "onCommand:flowpilot.selectCopilotModel",
+    "onCommand:flowpilot.initializeWorkspace",
+    "onCommand:flowpilot.runAction",
+    "onCommand:flowpilot.openDashboard",
+    "onCommand:flowpilot.refresh",
+    "onCommand:flowpilot.openConfig",
+    "onCommand:flowpilot.openKnowledge",
+    "onCommand:flowpilot.showGitStatus",
+    "onCommand:flowpilot.gitCreateBranch",
+    "onCommand:flowpilot.gitCheckoutBranch",
+    "onCommand:flowpilot.gitStageChangedFiles",
+    "onCommand:flowpilot.gitCommitStaged",
+    "onCommand:flowpilot.gitPushCurrentBranch",
+    "onCommand:flowpilot.gitlabSetToken",
+    "onCommand:flowpilot.gitlabClearToken",
+    "onCommand:flowpilot.gitlabTestConnection",
+    "onCommand:flowpilot.gitlabOpenIssue",
+    "onCommand:flowpilot.gitlabOpenMergeRequest",
+    "onCommand:flowpilot.gitlabCreateIssue",
+    "onCommand:flowpilot.dataRunApprovedQuery"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "flowpilot",
+          "title": "UBS FlowPilot",
+          "icon": "resources/flowpilot.svg"
+        }
+      ]
+    },
+    "views": {
+      "flowpilot": [
+        {
+          "id": "flowpilot.actions",
+          "name": "Actions",
+          "type": "webview"
+        },
+        {
+          "id": "flowpilot.workspace",
+          "name": "Workspace"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "flowpilot.actions",
+        "contents": "Run common delivery, Git, GitLab, and support actions from here.\n[Initialize Workspace](command:flowpilot.initializeWorkspace)\n[Open Dashboard](command:flowpilot.openDashboard)\n[Run Action](command:flowpilot.runAction)"
+      },
+      {
+        "view": "flowpilot.workspace",
+        "contents": "Open a workspace with `.flowpilot/flowpilot.yml` to see the active profile, Git state, and configured workflows.\n[Initialize Workspace](command:flowpilot.initializeWorkspace)\n[Open Configuration](command:flowpilot.openConfig)\n[Refresh](command:flowpilot.refresh)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "flowpilot.selectApplication",
+        "title": "UBS FlowPilot: Select Application",
+        "category": "UBS FlowPilot",
+        "icon": "$(layers-active)"
+      },
+      {
+        "command": "flowpilot.selectCopilotModel",
+        "title": "UBS FlowPilot: Select GitHub Copilot Model",
+        "category": "UBS FlowPilot",
+        "icon": "$(symbol-misc)"
+      },
+      {
+        "command": "flowpilot.initializeWorkspace",
+        "title": "UBS FlowPilot: Initialize Workspace",
+        "category": "UBS FlowPilot",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "flowpilot.runAction",
+        "title": "UBS FlowPilot: Run Action",
+        "category": "UBS FlowPilot",
+        "icon": "$(compass)"
+      },
+      {
+        "command": "flowpilot.openDashboard",
+        "title": "UBS FlowPilot: Open Dashboard",
+        "category": "UBS FlowPilot",
+        "icon": "$(compass)"
+      },
+      {
+        "command": "flowpilot.refresh",
+        "title": "UBS FlowPilot: Refresh",
+        "category": "UBS FlowPilot",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "flowpilot.openConfig",
+        "title": "UBS FlowPilot: Open Configuration",
+        "category": "UBS FlowPilot",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "flowpilot.openKnowledge",
+        "title": "UBS FlowPilot: Open Knowledge Pack",
+        "category": "UBS FlowPilot",
+        "icon": "$(book)"
+      },
+      {
+        "command": "flowpilot.analyseRequirement",
+        "title": "UBS FlowPilot: Analyse Requirement",
+        "category": "UBS FlowPilot",
+        "icon": "$(inspect)"
+      },
+      {
+        "command": "flowpilot.reviewMergeRequest",
+        "title": "UBS FlowPilot: Review Current Diff",
+        "category": "UBS FlowPilot",
+        "icon": "$(git-pull-request)"
+      },
+      {
+        "command": "flowpilot.generateTestScenarios",
+        "title": "UBS FlowPilot: Generate Test Scenarios",
+        "category": "UBS FlowPilot",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "flowpilot.investigateSupportIssue",
+        "title": "UBS FlowPilot: Investigate Support Issue",
+        "category": "UBS FlowPilot",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "flowpilot.checkDefinitionOfDone",
+        "title": "UBS FlowPilot: Check Definition of Done",
+        "category": "UBS FlowPilot",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "flowpilot.createDesignDocument",
+        "title": "UBS FlowPilot: Create Design Document",
+        "category": "UBS FlowPilot",
+        "icon": "$(symbol-structure)"
+      },
+      {
+        "command": "flowpilot.generateDesignDocument",
+        "title": "UBS FlowPilot: Generate Design Document",
+        "category": "UBS FlowPilot",
+        "icon": "$(symbol-structure)"
+      },
+      {
+        "command": "flowpilot.showGitStatus",
+        "title": "UBS FlowPilot: Show Git Status",
+        "category": "UBS FlowPilot",
+        "icon": "$(source-control)"
+      },
+      {
+        "command": "flowpilot.gitCreateBranch",
+        "title": "UBS FlowPilot: Create Branch",
+        "category": "UBS FlowPilot",
+        "icon": "$(git-branch)"
+      },
+      {
+        "command": "flowpilot.gitCheckoutBranch",
+        "title": "UBS FlowPilot: Checkout Branch",
+        "category": "UBS FlowPilot",
+        "icon": "$(repo)"
+      },
+      {
+        "command": "flowpilot.gitStageChangedFiles",
+        "title": "UBS FlowPilot: Stage Changed Files",
+        "category": "UBS FlowPilot",
+        "icon": "$(add)"
+      },
+      {
+        "command": "flowpilot.gitCommitStaged",
+        "title": "UBS FlowPilot: Commit Staged Files",
+        "category": "UBS FlowPilot",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "flowpilot.gitPushCurrentBranch",
+        "title": "UBS FlowPilot: Push Current Branch",
+        "category": "UBS FlowPilot",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "flowpilot.gitlabSetToken",
+        "title": "UBS FlowPilot: Set GitLab Token",
+        "category": "UBS FlowPilot",
+        "icon": "$(key)"
+      },
+      {
+        "command": "flowpilot.gitlabClearToken",
+        "title": "UBS FlowPilot: Clear GitLab Token",
+        "category": "UBS FlowPilot",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "flowpilot.gitlabTestConnection",
+        "title": "UBS FlowPilot: Test GitLab Connection",
+        "category": "UBS FlowPilot",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "flowpilot.gitlabOpenIssue",
+        "title": "UBS FlowPilot: Open GitLab Issue",
+        "category": "UBS FlowPilot",
+        "icon": "$(issues)"
+      },
+      {
+        "command": "flowpilot.gitlabOpenMergeRequest",
+        "title": "UBS FlowPilot: Open GitLab Merge Request",
+        "category": "UBS FlowPilot",
+        "icon": "$(git-pull-request)"
+      },
+      {
+        "command": "flowpilot.gitlabCreateIssue",
+        "title": "UBS FlowPilot: Create GitLab Issue",
+        "category": "UBS FlowPilot",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "flowpilot.dataRunApprovedQuery",
+        "title": "UBS FlowPilot: Run Approved Data Query",
+        "category": "UBS FlowPilot",
+        "icon": "$(database)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "flowpilot.refresh",
+          "when": "view == flowpilot.workspace",
+          "group": "navigation"
+        },
+        {
+          "command": "flowpilot.openDashboard",
+          "when": "view == flowpilot.workspace",
+          "group": "navigation"
+        },
+        {
+          "command": "flowpilot.selectCopilotModel",
+          "when": "view == flowpilot.workspace",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "flowpilot.generateTestScenarios",
+          "group": "flowpilot@1"
+        },
+        {
+          "command": "flowpilot.reviewMergeRequest",
+          "group": "flowpilot@2"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "flowpilot.analyseRequirement",
+          "group": "flowpilot@1"
+        },
+        {
+          "command": "flowpilot.createDesignDocument",
+          "group": "flowpilot@2"
+        },
+        {
+          "command": "flowpilot.generateDesignDocument",
+          "group": "flowpilot@2"
+        },
+        {
+          "command": "flowpilot.generateTestScenarios",
+          "group": "flowpilot@3"
+        }
+      ],
+      "scm/title": [
+        {
+          "command": "flowpilot.checkDefinitionOfDone",
+          "group": "flowpilot@1"
+        },
+        {
+          "command": "flowpilot.reviewMergeRequest",
+          "group": "flowpilot@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "UBS FlowPilot",
+      "properties": {
+        "flowpilot.configPath": {
+          "type": "string",
+          "default": ".flowpilot/flowpilot.yml",
+          "description": "Workspace-relative FlowPilot configuration path."
+        },
+        "flowpilot.gitlabHost": {
+          "type": "string",
+          "default": "",
+          "description": "Enterprise GitLab base URL, for example https://gitlab.company.com."
+        },
+        "flowpilot.dataGatewayUrl": {
+          "type": "string",
+          "default": "",
+          "description": "FlowPilot Data Gateway base URL. Required only when support data workflows are enabled."
+        },
+        "flowpilot.requireApprovalForWrites": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require user confirmation before Git, GitLab, or data write actions."
+        },
+        "flowpilot.showContextBeforeAi": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show users the summarized context before sending it to the language model."
+        },
+        "flowpilot.selectedCopilotModelId": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub Copilot language model ID used by FlowPilot AI workflows. Leave blank to use the first available Copilot model."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "check": "tsc --noEmit -p ./",
+    "package": "vsce package --no-dependencies --follow-symlinks --baseContentUrl https://gitlab.company.internal/platform-delivery/ubs-flowpilot/-/raw/main --baseImagesUrl https://gitlab.company.internal/platform-delivery/ubs-flowpilot/-/raw/main"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.101.0",
+    "typescript": "^5.5.0",
+    "@vscode/vsce": "^3.0.0"
+  }
+}

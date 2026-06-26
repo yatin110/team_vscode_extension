@@ -1,0 +1,20 @@
+id: impact-analysis
+name: Impact Analysis
+roles:
+  - ba
+  - developer
+inputs:
+  - gitlab.issue
+  - knowledge.applicationOverview
+  - knowledge.domainModel
+  - workspace.relatedFiles
+ai:
+  enabled: true
+  maxInputTokens: 8000
+  promptTemplate: prompts/impact-analysis.md
+outputs:
+  - businessImpact
+  - technicalImpact
+  - assumptions
+  - openQuestions
+  - acceptanceCriteria

@@ -1,0 +1,16 @@
+approvals:
+  requiredFor:
+    - gitCommit
+    - gitPush
+    - gitCheckoutWithDirtyTree
+    - createGitLabIssue
+    - updateGitLabIssue
+    - createGitLabMergeRequest
+    - postGitLabComment
+    - runDataQuery
+  blockedActions:
+    - gitResetHard
+    - gitClean
+    - gitForcePush
+    - deleteRemoteBranch
+    - productionDataWrite

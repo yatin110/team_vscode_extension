@@ -1,0 +1,24 @@
+id: support-investigation
+name: L3 Support Investigation
+roles:
+  - support
+  - developer
+  - tester
+inputs:
+  - gitlab.issue
+  - data.approvedQueries
+  - gitlab.pipeline
+  - knowledge.runbook
+ai:
+  enabled: true
+  maxInputTokens: 12000
+  promptTemplate: prompts/support-investigation.md
+outputs:
+  - evidenceSummary
+  - likelyCause
+  - nextActions
+  - gitLabCommentDraft
+approval:
+  requiredFor:
+    - runDataQuery
+    - postGitLabComment

@@ -1,0 +1,26 @@
+id: design-document
+name: Design Document
+roles:
+  - developer
+  - tech-lead
+  - ba
+inputs:
+  - gitlab.issue
+  - knowledge.applicationOverview
+  - knowledge.architecture
+  - knowledge.domainModel
+  - workspace.relatedFiles
+ai:
+  enabled: true
+  maxInputTokens: 16000
+  promptTemplate: prompts/design-document.md
+outputs:
+  - executiveSummary
+  - proposedSolution
+  - architectureChanges
+  - dataFlow
+  - interfaceChanges
+  - securityControls
+  - testingStrategy
+  - rolloutPlan
+  - risksAndOpenQuestions

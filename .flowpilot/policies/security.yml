@@ -1,0 +1,14 @@
+security:
+  showContextBeforeAi: true
+  redactSecrets: true
+  blockFiles:
+    - "**/.env"
+    - "**/*.pem"
+    - "**/*.key"
+    - "**/*secret*"
+    - "**/customer-data/**"
+  data:
+    productionMode: approvedQueriesOnly
+    maskPii: true
+    maxRows: 100
+    allowFreeSqlInProd: false

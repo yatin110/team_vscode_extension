@@ -1,0 +1,17 @@
+queries:
+  - id: find-record-by-reference
+    name: Find record by business reference
+    source: reference-oracle
+    environment: prod
+    access: readOnly
+    sql: |
+      select reference_id, status, created_at, updated_at
+      from business_records
+      where reference_id = :referenceId
+      fetch first 20 rows only
+    parameters:
+      referenceId:
+        type: string
+        required: true
+    maxRows: 20
+    pii: false

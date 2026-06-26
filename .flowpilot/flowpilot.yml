@@ -1,0 +1,182 @@
+name: UBS FlowPilot Enterprise Reference Pack
+version: 1
+defaultRole: developer
+
+applications:
+  - id: reporting
+    name: Reporting
+    knowledgeRoots:
+      - ai-knowledge/applications/reporting
+    actions:
+      enabled:
+        - flowpilot.selectApplication
+        - flowpilot.initializeWorkspace
+        - flowpilot.openDashboard
+        - flowpilot.analyseRequirement
+        - flowpilot.generateDesignDocument
+        - flowpilot.reviewMergeRequest
+        - flowpilot.generateTestScenarios
+        - flowpilot.checkDefinitionOfDone
+        - flowpilot.investigateSupportIssue
+        - flowpilot.dataRunApprovedQuery
+        - flowpilot.showGitStatus
+        - flowpilot.gitCreateBranch
+        - flowpilot.gitCheckoutBranch
+        - flowpilot.gitStageChangedFiles
+        - flowpilot.gitCommitStaged
+        - flowpilot.gitPushCurrentBranch
+        - flowpilot.gitlabSetToken
+        - flowpilot.gitlabTestConnection
+        - flowpilot.gitlabOpenIssue
+        - flowpilot.gitlabOpenMergeRequest
+        - flowpilot.gitlabCreateIssue
+        - flowpilot.openConfig
+        - flowpilot.openKnowledge
+    repositories:
+      - name: reporting-service
+        path: reporting-service
+        gitlabProjectId: REPORTING_SERVICE_PROJECT_ID
+        type: service
+        defaultBranch: main
+      - name: reporting-db
+        path: reporting-db
+        gitlabProjectId: REPORTING_DB_PROJECT_ID
+        type: infrastructure
+        defaultBranch: main
+      - name: reporting-batch
+        path: reporting-batch
+        gitlabProjectId: REPORTING_BATCH_PROJECT_ID
+        type: batch-worker
+        defaultBranch: main
+
+  - id: insights
+    name: Insights
+    knowledgeRoots:
+      - ai-knowledge/applications/insights
+    actions:
+      enabled:
+        - flowpilot.selectApplication
+        - flowpilot.initializeWorkspace
+        - flowpilot.openDashboard
+        - flowpilot.analyseRequirement
+        - flowpilot.generateDesignDocument
+        - flowpilot.reviewMergeRequest
+        - flowpilot.generateTestScenarios
+        - flowpilot.checkDefinitionOfDone
+        - flowpilot.showGitStatus
+        - flowpilot.gitCreateBranch
+        - flowpilot.gitCheckoutBranch
+        - flowpilot.gitStageChangedFiles
+        - flowpilot.gitCommitStaged
+        - flowpilot.gitPushCurrentBranch
+        - flowpilot.gitlabSetToken
+        - flowpilot.gitlabTestConnection
+        - flowpilot.gitlabOpenIssue
+        - flowpilot.gitlabOpenMergeRequest
+        - flowpilot.gitlabCreateIssue
+        - flowpilot.openConfig
+        - flowpilot.openKnowledge
+    repositories:
+      - name: insights-ui
+        path: insights-ui
+        gitlabProjectId: INSIGHTS_UI_PROJECT_ID
+        type: frontend
+        defaultBranch: main
+      - name: insights-e2e
+        path: insights-e2e
+        gitlabProjectId: INSIGHTS_E2E_PROJECT_ID
+        type: test-automation
+        defaultBranch: main
+
+  - id: reference-application
+    name: Reference Application
+    knowledgeRoots:
+      - ai-knowledge/applications/reference-application
+    actions:
+      enabled:
+        - flowpilot.selectApplication
+        - flowpilot.initializeWorkspace
+        - flowpilot.openDashboard
+        - flowpilot.analyseRequirement
+        - flowpilot.generateDesignDocument
+        - flowpilot.reviewMergeRequest
+        - flowpilot.generateTestScenarios
+        - flowpilot.checkDefinitionOfDone
+        - flowpilot.investigateSupportIssue
+        - flowpilot.dataRunApprovedQuery
+        - flowpilot.showGitStatus
+        - flowpilot.gitCreateBranch
+        - flowpilot.gitCheckoutBranch
+        - flowpilot.gitStageChangedFiles
+        - flowpilot.gitCommitStaged
+        - flowpilot.gitPushCurrentBranch
+        - flowpilot.gitlabSetToken
+        - flowpilot.gitlabTestConnection
+        - flowpilot.gitlabOpenIssue
+        - flowpilot.gitlabOpenMergeRequest
+        - flowpilot.gitlabCreateIssue
+        - flowpilot.openConfig
+        - flowpilot.openKnowledge
+    repositories:
+      - name: reference-api
+        path: services/reference-api
+        gitlabProjectId: FLOWPILOT_API_PROJECT_ID
+        type: service
+        defaultBranch: main
+      - name: reference-ui
+        path: apps/reference-ui
+        gitlabProjectId: FLOWPILOT_UI_PROJECT_ID
+        type: frontend
+        defaultBranch: main
+      - name: reference-test-automation
+        path: tests/reference-automation
+        gitlabProjectId: FLOWPILOT_TEST_PROJECT_ID
+        type: test-automation
+        defaultBranch: main
+
+gitlab:
+  host: https://gitlab.company.internal
+  defaultGroup: reporting-and-insights
+  projectMappings:
+    - repoPath: reporting-service
+      projectId: REPORTING_SERVICE_PROJECT_ID
+    - repoPath: reporting-db
+      projectId: REPORTING_DB_PROJECT_ID
+    - repoPath: reporting-batch
+      projectId: REPORTING_BATCH_PROJECT_ID
+    - repoPath: insights-ui
+      projectId: INSIGHTS_UI_PROJECT_ID
+    - repoPath: insights-e2e
+      projectId: INSIGHTS_E2E_PROJECT_ID
+
+knowledge:
+  roots:
+    - ai-knowledge/global
+    - ai-knowledge/applications/reporting
+    - ai-knowledge/applications/insights
+    - ai-knowledge/applications/reference-application
+  ignore:
+    - "**/.env"
+    - "**/*.pem"
+    - "**/*secret*"
+    - "**/customer-data/**"
+
+workflows:
+  enabled:
+    - impact-analysis
+    - design-document
+    - mr-review
+    - test-scenarios
+    - support-investigation
+    - definition-of-done
+
+data:
+  enabled: false
+  gatewayUrl: https://flowpilot-data-gateway.company.internal
+  environments:
+    - name: dev
+      allowed: true
+    - name: test
+      allowed: true
+    - name: prod
+      allowed: readOnly

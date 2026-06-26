@@ -1,0 +1,20 @@
+id: definition-of-done
+name: Definition of Done Check
+roles:
+  - ba
+  - developer
+  - tester
+  - tech-lead
+inputs:
+  - git.status
+  - git.diff
+  - gitlab.mergeRequest
+  - knowledge.definitionOfDone
+ai:
+  enabled: false
+outputs:
+  - missingAcceptanceCriteria
+  - missingTests
+  - missingDocumentation
+  - pipelineState
+  - approvalReadiness

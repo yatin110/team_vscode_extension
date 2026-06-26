@@ -1,0 +1,8 @@
+dist/
+node_modules/
+.pnpm-store/
+*.vsix
+.DS_Store
+.flowpilot/cache/
+.flowpilot/audit/*.local.jsonl
+outputs/

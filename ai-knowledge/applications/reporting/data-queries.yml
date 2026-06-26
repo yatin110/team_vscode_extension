@@ -1,0 +1,34 @@
+queries:
+  - id: find-reporting-record-by-reference
+    name: Find reporting record by business reference
+    source: reporting-oracle
+    environment: prod
+    access: readOnly
+    sql: |
+      select reference_id, dataset_name, reporting_period, status, created_at, updated_at
+      from reporting_records
+      where reference_id = :referenceId
+      fetch first 20 rows only
+    parameters:
+      referenceId:
+        type: string
+        required: true
+    maxRows: 20
+    pii: false
+
+  - id: batch-status-by-run-id
+    name: Find batch status by run ID
+    source: reporting-oracle
+    environment: prod
+    access: readOnly
+    sql: |
+      select run_id, job_name, status, started_at, completed_at, error_code
+      from reporting_batch_runs
+      where run_id = :runId
+      fetch first 20 rows only
+    parameters:
+      runId:
+        type: string
+        required: true
+    maxRows: 20
+    pii: false

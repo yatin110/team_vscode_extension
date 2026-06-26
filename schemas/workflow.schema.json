@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ubs.internal/flowpilot/schemas/workflow.schema.json",
+  "title": "UBS FlowPilot Workflow",
+  "type": "object",
+  "required": ["id", "name", "roles", "inputs", "outputs"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "roles": {
+      "type": "array",
+      "items": {
+        "enum": ["ba", "developer", "tester", "support", "tech-lead"]
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "maxInputTokens": { "type": "integer", "minimum": 1000 },
+        "promptTemplate": { "type": "string" }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requiredFor": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

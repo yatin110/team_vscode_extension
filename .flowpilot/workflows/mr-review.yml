@@ -1,0 +1,22 @@
+id: mr-review
+name: Merge Request Review
+roles:
+  - developer
+  - tech-lead
+inputs:
+  - gitlab.mergeRequest
+  - git.diff
+  - knowledge.codingStandards
+  - knowledge.securityRules
+ai:
+  enabled: true
+  maxInputTokens: 16000
+  promptTemplate: prompts/mr-review.md
+outputs:
+  - reviewSummary
+  - risks
+  - missingTests
+  - suggestedComments
+approval:
+  requiredFor:
+    - postGitLabComment
