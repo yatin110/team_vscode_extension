@@ -38,7 +38,12 @@ export function activate(context: vscode.ExtensionContext): void {
   const ai = new CopilotLmClient(tokens, output, copilotModels);
   const data = new DataGatewayClient(secrets, output);
   const initializer = new WorkspaceInitializer(approval, configuration);
-  const tree = new FlowPilotTreeDataProvider(configuration, git);
+  const tree = new FlowPilotTreeDataProvider(
+    configuration,
+    git,
+    applications,
+    copilotModels,
+  );
   const workflows = new WorkflowRegistry({
     ai,
     approval,
@@ -58,6 +63,8 @@ export function activate(context: vscode.ExtensionContext): void {
       new FlowPilotActionsWebviewProvider(applications, copilotModels),
     ),
     vscode.window.registerTreeDataProvider("flowpilot.workspace", tree),
+    applications.onDidChangeSelectedApplication(() => tree.refresh()),
+    copilotModels.onDidChangeSelectedModel(() => tree.refresh()),
   );
 
   registerFlowPilotCommand(

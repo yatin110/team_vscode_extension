@@ -77,6 +77,12 @@ export function registerCoreCommands(
     async () => {
       const workspace = getActiveWorkspaceFolder().uri;
       const uri = vscode.Uri.joinPath(workspace, ".flowpilot", "flowpilot.yml");
+      if (!(await exists(uri))) {
+        await promptInitializeWorkspace(
+          "FlowPilot configuration has not been created in this workspace.",
+        );
+        return;
+      }
       const document = await vscode.workspace.openTextDocument(uri);
       await vscode.window.showTextDocument(document, { preview: false });
     },
@@ -88,10 +94,36 @@ export function registerCoreCommands(
     logger,
     async () => {
       const workspace = getActiveWorkspaceFolder().uri;
+      const uri = vscode.Uri.joinPath(workspace, "ai-knowledge");
+      if (!(await exists(uri))) {
+        await promptInitializeWorkspace(
+          "FlowPilot knowledge files have not been created in this workspace.",
+        );
+        return;
+      }
       await vscode.commands.executeCommand(
         "revealInExplorer",
-        vscode.Uri.joinPath(workspace, "ai-knowledge"),
+        uri,
       );
     },
   );
+}
+
+async function exists(uri: vscode.Uri): Promise<boolean> {
+  try {
+    await vscode.workspace.fs.stat(uri);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function promptInitializeWorkspace(message: string): Promise<void> {
+  const action = await vscode.window.showInformationMessage(
+    message,
+    "Initialize Workspace",
+  );
+  if (action === "Initialize Workspace") {
+    await vscode.commands.executeCommand("flowpilot.initializeWorkspace");
+  }
 }

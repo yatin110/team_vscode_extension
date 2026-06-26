@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
+import { CopilotModelService } from "../services/ai/copilotModelService";
+import { ApplicationService } from "../services/application/applicationService";
 import { ConfigurationService } from "../services/config/configurationService";
 import { GitService } from "../services/git/gitService";
-import { FLOWPILOT_ACTIONS } from "./flowPilotActions";
+import { FLOWPILOT_ACTIONS, FlowPilotAction } from "./flowPilotActions";
 
-type TreeItemKind = "workflow" | "git" | "gitlab" | "support" | "config";
+type TreeItemKind = "start" | "workflow" | "git" | "gitlab" | "support" | "config";
 
 interface FlowPilotTreeItemDefinition {
   id: string;
@@ -25,6 +27,8 @@ export class FlowPilotTreeDataProvider
   constructor(
     private readonly configuration: ConfigurationService,
     private readonly git: GitService,
+    private readonly applications: ApplicationService,
+    private readonly copilotModels: CopilotModelService,
   ) {}
 
   refresh(): void {
@@ -43,16 +47,15 @@ export class FlowPilotTreeDataProvider
 
     const status = await this.safeGitStatus();
     const configName = await this.safeConfigName();
-
-    const actionByCommand = new Map(
-      FLOWPILOT_ACTIONS.map((action) => [action.command, action]),
-    );
+    const selectedApplication = await this.applications.selectedApplication();
+    const selectedModel = await this.copilotModels.selectedModelSummary();
+    const visibleActions = await this.applications.visibleActions(FLOWPILOT_ACTIONS);
 
     const items: FlowPilotTreeItemDefinition[] = [
       {
         id: "config",
         label: configName,
-        description: "workspace profile",
+        description: selectedApplication?.name ?? "workspace profile",
         icon: new vscode.ThemeIcon("settings-gear"),
         command: {
           command: "flowpilot.openDashboard",
@@ -61,82 +64,98 @@ export class FlowPilotTreeDataProvider
         kind: "config",
       },
       {
-        id: "dod",
-        label: actionByCommand.get("flowpilot.checkDefinitionOfDone")?.label ?? "Definition of Done",
-        description: status?.branch ?? "git status",
-        icon: new vscode.ThemeIcon("checklist"),
+        id: "application",
+        label: "Application",
+        description: selectedApplication?.name ?? "not selected",
+        icon: new vscode.ThemeIcon("layers-active"),
         command: {
-          command: "flowpilot.checkDefinitionOfDone",
-          title: "Check Definition of Done",
+          command: "flowpilot.selectApplication",
+          title: "Select Application",
         },
-        kind: "workflow",
+        kind: "start",
       },
       {
-        id: "impact",
-        label: "Analyse Requirement",
-        icon: new vscode.ThemeIcon("inspect"),
+        id: "model",
+        label: "AI Model",
+        description: selectedModel?.name ?? "Copilot default",
+        icon: new vscode.ThemeIcon("symbol-misc"),
         command: {
-          command: "flowpilot.analyseRequirement",
-          title: "Analyse Requirement",
+          command: "flowpilot.selectCopilotModel",
+          title: "Select GitHub Copilot Model",
         },
-        kind: "workflow",
-      },
-      {
-        id: "review",
-        label: "Review Current Diff",
-        description: status ? `${status.changedFiles.length} changed` : undefined,
-        icon: new vscode.ThemeIcon("git-pull-request"),
-        command: {
-          command: "flowpilot.reviewMergeRequest",
-          title: "Review Current Diff",
-        },
-        kind: "workflow",
-      },
-      {
-        id: "tests",
-        label: "Generate Test Scenarios",
-        icon: new vscode.ThemeIcon("beaker"),
-        command: {
-          command: "flowpilot.generateTestScenarios",
-          title: "Generate Test Scenarios",
-        },
-        kind: "workflow",
-      },
-      {
-        id: "support",
-        label: "Investigate Support Issue",
-        icon: new vscode.ThemeIcon("pulse"),
-        command: {
-          command: "flowpilot.investigateSupportIssue",
-          title: "Investigate Support Issue",
-        },
-        kind: "support",
-      },
-      {
-        id: "git",
-        label: "Git Actions",
-        description: "branch, commit, push",
-        icon: new vscode.ThemeIcon("source-control"),
-        command: {
-          command: "flowpilot.showGitStatus",
-          title: "Show Git Status",
-        },
-        kind: "git",
-      },
-      {
-        id: "gitlab",
-        label: "GitLab",
-        description: "issues and merge requests",
-        icon: new vscode.ThemeIcon("remote"),
-        command: {
-          command: "flowpilot.gitlabTestConnection",
-          title: "Test GitLab Connection",
-        },
-        kind: "gitlab",
+        kind: "start",
       },
     ];
 
+    for (const action of visibleActions) {
+      if (!this.shouldShowActionInTree(action)) {
+        continue;
+      }
+      items.push(this.toTreeItem(action, status));
+    }
+
     return items.map((item) => new FlowPilotTreeItem(item));
+  }
+
+  private shouldShowActionInTree(action: FlowPilotAction): boolean {
+    if (action.group === "Start" || action.group === "Configuration") {
+      return false;
+    }
+
+    if (action.primary) {
+      return true;
+    }
+
+    return (
+      action.command === "flowpilot.showGitStatus" ||
+      action.command === "flowpilot.gitlabTestConnection" ||
+      action.command === "flowpilot.dataRunApprovedQuery"
+    );
+  }
+
+  private toTreeItem(action: FlowPilotAction, status?: Awaited<ReturnType<GitService["status"]>>): FlowPilotTreeItemDefinition {
+    return {
+      id: action.command,
+      label: action.label,
+      description: this.descriptionForAction(action, status),
+      icon: new vscode.ThemeIcon(action.icon),
+      command: {
+        command: action.command,
+        title: action.label,
+      },
+      kind: this.kindForAction(action),
+    };
+  }
+
+  private descriptionForAction(
+    action: FlowPilotAction,
+    status?: Awaited<ReturnType<GitService["status"]>>,
+  ): string | undefined {
+    if (action.command === "flowpilot.reviewMergeRequest" && status) {
+      return `${status.changedFiles.length} changed`;
+    }
+    if (action.command === "flowpilot.checkDefinitionOfDone") {
+      return status?.branch ?? "git status";
+    }
+    if (action.command === "flowpilot.showGitStatus") {
+      return status?.branch ?? "branch status";
+    }
+    return undefined;
+  }
+
+  private kindForAction(action: FlowPilotAction): TreeItemKind {
+    switch (action.group) {
+      case "Support":
+        return "support";
+      case "Git":
+        return "git";
+      case "GitLab":
+        return "gitlab";
+      case "Start":
+        return "start";
+      default:
+        return "workflow";
+    }
   }
 
   private async safeGitStatus() {

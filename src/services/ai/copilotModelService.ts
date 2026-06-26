@@ -22,8 +22,12 @@ export class CopilotModelService {
   }
 
   async selectedModelSummary(): Promise<CopilotModelSummary | undefined> {
-    const model = await this.selectedModel();
-    return model ? this.toSummary(model) : undefined;
+    try {
+      const model = await this.selectedModel();
+      return model ? this.toSummary(model) : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   async selectedModel(): Promise<vscode.LanguageModelChat | undefined> {

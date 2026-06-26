@@ -26,7 +26,7 @@ export class FlowPilotActionsWebviewProvider implements vscode.WebviewViewProvid
     };
     webviewView.webview.html = await this.html(webviewView.webview);
     webviewView.webview.onDidReceiveMessage(async (message: { command?: string }) => {
-      if (message.command) {
+      if (message.command && this.isAllowedCommand(message.command)) {
         await vscode.commands.executeCommand(message.command);
       }
     });
@@ -204,10 +204,13 @@ export class FlowPilotActionsWebviewProvider implements vscode.WebviewViewProvid
 
     const visibleActions = await this.applications.visibleActions(FLOWPILOT_ACTIONS);
     return groups
-      .map((group) => {
+      .flatMap((group) => {
         const actions = visibleActions.filter(
           (action) => action.group === group && action.command !== "flowpilot.openDashboard",
         );
+        if (actions.length === 0) {
+          return [];
+        }
         return [
           `<div class="section">${escapeHtml(group)}</div>`,
           ...actions.map(
@@ -217,6 +220,10 @@ export class FlowPilotActionsWebviewProvider implements vscode.WebviewViewProvid
         ].join("\n");
       })
       .join("\n");
+  }
+
+  private isAllowedCommand(command: string): boolean {
+    return FLOWPILOT_ACTIONS.some((action) => action.command === command);
   }
 }
 

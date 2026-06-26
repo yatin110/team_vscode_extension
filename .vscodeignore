@@ -6,7 +6,6 @@
 .flowpilot/audit/**
 .flowpilot/**
 ai-knowledge/**
-docs/**
 outputs/**
 node_modules/**
 .pnpm-store/**
