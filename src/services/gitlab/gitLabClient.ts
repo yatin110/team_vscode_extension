@@ -106,7 +106,9 @@ export class GitLabClient {
   ): Promise<T> {
     const token = await this.ensureToken();
     const host = await this.gitlabHost();
-    const response = await fetch(`${host}/api/v4${path}`, {
+    const requestUrl = `${host.url}/api/v4${path}`;
+    const method = init.method ?? "GET";
+    const response = await fetch(requestUrl, {
       ...init,
       headers: {
         "Content-Type": "application/json",
@@ -116,32 +118,49 @@ export class GitLabClient {
     });
 
     this.output.appendLine(
-      `GitLab ${init.method ?? "GET"} ${path}: ${response.status}`,
+      `GitLab ${method} ${requestUrl} (host source: ${host.source}): ${response.status}`,
     );
 
     if (!response.ok) {
+      const body = await response.text();
+      if (body.trim().length > 0) {
+        this.output.appendLine(
+          `GitLab response body: ${body.trim().slice(0, 500)}`,
+        );
+      }
       throw new Error(`GitLab API request failed: ${response.status}`);
     }
 
     return (await response.json()) as T;
   }
 
-  private async gitlabHost(): Promise<string> {
+  private async gitlabHost(): Promise<GitLabHostResolution> {
     const settingsHost = FlowPilotSettings.gitlabHost();
     if (settingsHost) {
-      return settingsHost;
+      return {
+        url: settingsHost,
+        source: "VS Code setting flowpilot.gitlabHost",
+      };
     }
 
     const config = await this.configuration.load();
     const configHost = config.gitlab?.host?.trim();
     if (configHost) {
-      return FlowPilotSettings.normalizeUrl(configHost, "GitLab host");
+      return {
+        url: FlowPilotSettings.normalizeUrl(configHost, "GitLab host"),
+        source: ".flowpilot/flowpilot.yml gitlab.host",
+      };
     }
 
     throw new Error(
       "Configure GitLab host in UBS FlowPilot settings or .flowpilot/flowpilot.yml before using this action.",
     );
   }
+}
+
+interface GitLabHostResolution {
+  url: string;
+  source: string;
 }
 
 function encodeGitLabProjectId(projectId: string): string {

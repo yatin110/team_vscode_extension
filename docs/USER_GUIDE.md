@@ -96,6 +96,10 @@ Example:
 
 The singular filename `setting.json` is ignored by VS Code.
 
+To inspect the exact GitLab endpoint FlowPilot is calling, open the VS Code
+Output panel and select `UBS FlowPilot`. GitLab logs include the full API URL
+and whether the host came from VS Code settings or `.flowpilot/flowpilot.yml`.
+
 ## Selecting An Application
 
 If the workspace contains multiple configured applications, use `Select
