@@ -127,6 +127,9 @@ workflows:
     - definition-of-done
 ```
 
+FlowPilot can read `gitlab.host` from this file. A workspace setting named
+`flowpilot.gitlabHost` in `.vscode/settings.json` overrides it when present.
+
 Use `applications[].repositories[]` when one application spans multiple
 repositories. Keep `gitlab.projectMappings` for compatibility with simpler
 single-repository teams.

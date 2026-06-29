@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { FlowPilotSettings } from "../../platform/settings";
 import { GitLabIssue, GitLabMergeRequest } from "../../types";
+import { ConfigurationService } from "../config/configurationService";
 import { SecretService } from "../security/secretService";
 
 const TOKEN_KEY = "flowpilot.gitlab.token";
@@ -9,6 +10,7 @@ export class GitLabClient {
   constructor(
     private readonly secrets: SecretService,
     private readonly output: vscode.OutputChannel,
+    private readonly configuration: ConfigurationService,
   ) {}
 
   async ensureToken(): Promise<string> {
@@ -46,7 +48,7 @@ export class GitLabClient {
 
   async getIssue(projectId: string, iid: number): Promise<GitLabIssue> {
     const data = await this.request<GitLabApiIssue>(
-      `/projects/${encodeURIComponent(projectId)}/issues/${iid}`,
+      `/projects/${encodeGitLabProjectId(projectId)}/issues/${iid}`,
     );
 
     return {
@@ -63,7 +65,7 @@ export class GitLabClient {
     iid: number,
   ): Promise<GitLabMergeRequest> {
     const data = await this.request<GitLabApiMergeRequest>(
-      `/projects/${encodeURIComponent(projectId)}/merge_requests/${iid}`,
+      `/projects/${encodeGitLabProjectId(projectId)}/merge_requests/${iid}`,
     );
 
     return {
@@ -82,7 +84,7 @@ export class GitLabClient {
     description: string,
   ): Promise<GitLabIssue> {
     const data = await this.request<GitLabApiIssue>(
-      `/projects/${encodeURIComponent(projectId)}/issues`,
+      `/projects/${encodeGitLabProjectId(projectId)}/issues`,
       {
         method: "POST",
         body: JSON.stringify({ title, description }),
@@ -103,7 +105,7 @@ export class GitLabClient {
     init: RequestInit = {},
   ): Promise<T> {
     const token = await this.ensureToken();
-    const host = FlowPilotSettings.gitlabHost();
+    const host = await this.gitlabHost();
     const response = await fetch(`${host}/api/v4${path}`, {
       ...init,
       headers: {
@@ -122,6 +124,31 @@ export class GitLabClient {
     }
 
     return (await response.json()) as T;
+  }
+
+  private async gitlabHost(): Promise<string> {
+    const settingsHost = FlowPilotSettings.gitlabHost();
+    if (settingsHost) {
+      return settingsHost;
+    }
+
+    const config = await this.configuration.load();
+    const configHost = config.gitlab?.host?.trim();
+    if (configHost) {
+      return FlowPilotSettings.normalizeUrl(configHost, "GitLab host");
+    }
+
+    throw new Error(
+      "Configure GitLab host in UBS FlowPilot settings or .flowpilot/flowpilot.yml before using this action.",
+    );
+  }
+}
+
+function encodeGitLabProjectId(projectId: string): string {
+  try {
+    return encodeURIComponent(decodeURIComponent(projectId));
+  } catch {
+    return encodeURIComponent(projectId);
   }
 }
 

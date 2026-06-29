@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const applications = new ApplicationService(configuration, context.workspaceState);
   const approval = new ApprovalService();
   const git = new GitService(output);
-  const gitlab = new GitLabClient(secrets, output);
+  const gitlab = new GitLabClient(secrets, output, configuration);
   const knowledge = new KnowledgeService(configuration, output);
   const tokens = new TokenBudgetService(output);
   const copilotModels = new CopilotModelService();

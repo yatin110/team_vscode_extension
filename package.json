@@ -2,7 +2,7 @@
   "name": "ubs-flowpilot",
   "displayName": "UBS FlowPilot",
   "description": "Enterprise VS Code assistant platform for delivery workflows, GitLab integration, knowledge retrieval, and governed L3 support.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "ubs-internal",
   "license": "UNLICENSED",
   "repository": {

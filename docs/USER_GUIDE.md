@@ -73,6 +73,29 @@ workflows. FlowPilot uses the selection as the initial input.
 The initializer creates missing files only. It does not overwrite existing
 FlowPilot configuration or knowledge files.
 
+## GitLab Host Configuration
+
+FlowPilot resolves the enterprise GitLab host in this order:
+
+1. VS Code workspace setting `flowpilot.gitlabHost`.
+2. `.flowpilot/flowpilot.yml` under `gitlab.host`.
+
+If you use VS Code workspace settings, the file must be named:
+
+```text
+.vscode/settings.json
+```
+
+Example:
+
+```json
+{
+  "flowpilot.gitlabHost": "https://gitlab.company.com"
+}
+```
+
+The singular filename `setting.json` is ignored by VS Code.
+
 ## Selecting An Application
 
 If the workspace contains multiple configured applications, use `Select
